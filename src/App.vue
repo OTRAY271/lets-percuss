@@ -1,8 +1,6 @@
 <template>
   <v-app class="noscroll">
-      <v-content class="noscroll">
-          <router-view id="background" class="noscroll"></router-view>
-      </v-content>
+      <router-view id="background" class="noscroll"></router-view>
   </v-app>
 </template>
 
