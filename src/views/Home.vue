@@ -3,7 +3,7 @@
     <v-row class="logo" dense></v-row>
     <v-row class="btns" dense>
       <v-col v-for="card in cards" :key="card.title" cols="6" sm="3">
-        <v-card height="100%">
+        <v-card height="100%" @click="$router.push(card.url)">
           <v-img
             :src="card.img"
             class="white--text align-end"
@@ -29,6 +29,7 @@ export default class Home extends Vue {
     {
       title: "メトロノーム",
       img: "https://cdn.vuetifyjs.com/images/cards/house.jpg",
+      url: "/metronome",
     },
     {
       title: "ミラー",
