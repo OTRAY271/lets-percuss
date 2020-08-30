@@ -1,6 +1,8 @@
 <template>
   <v-app class="noscroll">
+    <v-main>
       <router-view id="background" class="noscroll"></router-view>
+    </v-main>
   </v-app>
 </template>
 
@@ -9,15 +11,14 @@ import Vue from "vue";
 import Component from "vue-class-component";
 
 @Component({
-  components: {
-  }
+  components: {},
 })
 export default class App extends Vue {
   public mounted() {
     /* ピッチインピッチアウトによる拡大縮小を禁止 */
     document.documentElement.addEventListener(
       "touchstart",
-      function(e) {
+      function (e) {
         if (e.touches.length >= 2) {
           e.preventDefault();
         }
