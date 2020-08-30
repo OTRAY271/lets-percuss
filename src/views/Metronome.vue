@@ -12,7 +12,7 @@
       <v-row no-gutters class="main-row">
         <v-col cols="12" sm="6">
           <v-select :items="menu" v-model="current_menu" solo hide-details="true"></v-select>
-          <v-sheet id="canvas-cover" height="30vh" class="mt-4">
+          <v-sheet id="canvas-cover" height="25vh" class="mt-4">
             <canvas id="metronome"></canvas>
           </v-sheet>
         </v-col>
@@ -26,7 +26,7 @@
               </v-container>
             </v-col>
             <v-col cols="5" class="text-center">
-              <span class="bpm">{{ bpm }}</span>
+              <span class="bpm" @click.stop="openChangeBpmDialog">{{ bpm }}</span>
             </v-col>
             <v-col cols="auto">
               <v-container fluid fill-height class="pa-0">
@@ -41,6 +41,23 @@
         </v-col>
       </v-row>
     </v-container>
+
+    <v-dialog v-model="changeBpmDialog" max-width="290">
+      <v-card>
+        <v-card-title class="headline">BPMを変更</v-card-title>
+
+        <v-card-text>
+          <v-text-field v-model.number="bpmTemporary" clearable type="number" ref="bpmField"></v-text-field>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn color="primary" text @click="closeChangeBpmDialog">キャンセル</v-btn>
+          <v-btn color="primary" text @click="changeBpm">完了</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -64,8 +81,10 @@ export default class Metronome extends Vue {
   public weight = new Image();
   public clickSound!: Howl;
   public bpm = 128;
+  public bpmTemporary = this.bpm;
   private bpms = new Array<number>();
   public isPlaying = false;
+  public changeBpmDialog = false;
 
   public mounted() {
     this.calBpms();
@@ -190,10 +209,11 @@ export default class Metronome extends Vue {
         fixedBpmIndex = index;
       }
     }, this);
-    if (fixedBpmIndex + 1 < this.bpms.length)
+    if (fixedBpmIndex + 1 < this.bpms.length) {
       this.bpm = this.bpms[fixedBpmIndex + 1];
-    this.reset = true;
-    this.preDraw();
+      this.reset = true;
+      this.preDraw();
+    }
   }
   public minusBPM() {
     let minDiff = -1;
@@ -205,9 +225,11 @@ export default class Metronome extends Vue {
         fixedBpmIndex = index;
       }
     }, this);
-    if (fixedBpmIndex - 1 >= 0) this.bpm = this.bpms[fixedBpmIndex - 1];
-    this.reset = true;
-    this.preDraw();
+    if (fixedBpmIndex - 1 >= 0) {
+      this.bpm = this.bpms[fixedBpmIndex - 1];
+      this.reset = true;
+      this.preDraw();
+    }
   }
 
   private currentId = 0;
@@ -222,6 +244,25 @@ export default class Metronome extends Vue {
     }
   }
 
+  public openChangeBpmDialog() {
+    this.bpmTemporary = this.bpm;
+    this.changeBpmDialog = true;
+    setTimeout(() => (this.$refs.bpmField as HTMLDivElement).focus(), 100);
+  }
+
+  public closeChangeBpmDialog() {
+    this.changeBpmDialog = false;
+    scroll(0, 0);
+  }
+
+  public changeBpm() {
+    if (this.bpmTemporary < this.bpms[0]) this.bpmTemporary = this.bpms[0];
+    else if (this.bpmTemporary > this.bpms[this.bpms.length - 1])
+      this.bpmTemporary = this.bpms[this.bpms.length - 1];
+    this.bpm = this.bpmTemporary;
+    this.closeChangeBpmDialog();
+  }
+
   beforeRouteLeave(to: VueRouter, from: VueRouter, next: Function) {
     cancelAnimationFrame(this.id);
     next();
@@ -232,6 +273,7 @@ export default class Metronome extends Vue {
 <style scoped>
 .bpm {
   font-size: 5rem;
+  cursor: pointer;
 }
 .main-container {
   height: calc(var(--vh, 1vh) * 100 - 56px);
