@@ -8,11 +8,16 @@
       <v-toolbar-title>メトロノーム</v-toolbar-title>
     </v-app-bar>
 
-    <v-container class="main-container" fill-height>
+    <v-container :class="sheet === null ? 'menu-bar' : 'menu-bar-with-sheet'">
+      <v-select :items="menu" v-model="current_menu" solo hide-details="true" @change="menuChanged"></v-select>
+    </v-container>
+    <v-container
+      :class="sheet === null ? 'main-container' : 'main-container-with-sheet'"
+      fill-height
+    >
       <v-row no-gutters class="main-row">
         <v-col cols="12" sm="6">
-          <v-select :items="menu" v-model="current_menu" solo hide-details="true"></v-select>
-          <v-sheet id="canvas-cover" height="25vh" class="mt-4">
+          <v-sheet id="canvas-cover" height="25vh">
             <canvas id="metronome"></canvas>
           </v-sheet>
         </v-col>
@@ -36,8 +41,10 @@
               </v-container>
             </v-col>
           </v-row>
-          <v-btn block large outlined @click="btnClicked">{{isPlaying ? "STOP":"START"}}</v-btn>
-          <v-img class="mt-8" :src="require('@/assets/sheet/kiso1.png')" max-width="100%" contain></v-img>
+          <v-btn block large outlined @click="btnClicked">
+            <v-icon class="mr-2">{{isPlaying ? "mdi-pause":"mdi-play"}}</v-icon>
+          </v-btn>
+          <v-img class="mt-8" v-if="sheet !== null" :src="sheet" max-width="100%" contain></v-img>
         </v-col>
       </v-row>
     </v-container>
@@ -75,13 +82,14 @@ Component.registerHooks(["beforeRouteLeave"]);
 export default class Metronome extends Vue {
   public menu = ["フリー", "基礎練１", "基礎練２"];
   public current_menu = this.menu[0];
+  public registeredBpms = [120, 60, 98];
+  public sheets = [null, "kiso1.png", null];
   public canvas!: HTMLCanvasElement;
   public ctx!: CanvasRenderingContext2D;
   public metronome = new Image();
   public weight = new Image();
   public clickSound!: Howl;
-  public bpm = 128;
-  public bpmTemporary = this.bpm;
+  public bpmTemporary = 0;
   private bpms = new Array<number>();
   public isPlaying = false;
   public changeBpmDialog = false;
@@ -109,6 +117,9 @@ export default class Metronome extends Vue {
     this.clickSound = new Howl({
       src: [require("@/assets/metronome/click.wav")],
     });
+
+    let _registeredBpms = localStorage.getItem("registeredBpms");
+    if (_registeredBpms) this.registeredBpms = JSON.parse(_registeredBpms);
   }
 
   private loadCount = 0;
@@ -263,6 +274,31 @@ export default class Metronome extends Vue {
     this.closeChangeBpmDialog();
   }
 
+  public menuChanged() {
+    this.bpm = this.registeredBpms[this.menu.indexOf(this.current_menu)];
+    this.reset = true;
+  }
+
+  public get bpm() {
+    return this.registeredBpms[this.menu.indexOf(this.current_menu)];
+  }
+
+  public set bpm(newValue) {
+    this.registeredBpms.splice(
+      this.menu.indexOf(this.current_menu),
+      1,
+      newValue
+    );
+    localStorage.setItem("registeredBpms", JSON.stringify(this.registeredBpms));
+  }
+
+  public get sheet() {
+    let index = this.menu.indexOf(this.current_menu);
+    return index < this.sheets.length && this.sheets[index] !== null
+      ? require("@/assets/sheet/" + this.sheets[index])
+      : null;
+  }
+
   beforeRouteLeave(to: VueRouter, from: VueRouter, next: Function) {
     cancelAnimationFrame(this.id);
     next();
@@ -278,11 +314,21 @@ export default class Metronome extends Vue {
 .main-container {
   height: calc(var(--vh, 1vh) * 100 - 56px);
 }
+.main-container-with-sheet {
+  height: calc(var(--vh, 1vh) * 100 - 128px);
+}
 .main-row {
   max-width: 100% !important;
 }
 #metronome {
   width: 100%;
   height: 40vh;
+}
+.menu-bar {
+  position: absolute;
+  top: 56px;
+}
+.menu-bar-with-sheet {
+  position: relative;
 }
 </style>
