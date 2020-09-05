@@ -6,48 +6,67 @@
       </v-btn>
 
       <v-toolbar-title>メトロノーム</v-toolbar-title>
+
+      <template v-slot:extension>
+        <v-tabs v-model="currentTab" align-with-title fixed-tabs>
+          <v-tabs-slider></v-tabs-slider>
+
+          <v-tab v-for="tab in tabs" :key="tab" class="ma-0">{{ tab }}</v-tab>
+        </v-tabs>
+      </template>
     </v-app-bar>
 
-    <v-container :class="sheet === null ? 'menu-bar' : 'menu-bar-with-sheet'">
-      <v-select :items="menu" v-model="current_menu" solo hide-details="true" @change="menuChanged"></v-select>
-    </v-container>
-    <v-container
-      :class="sheet === null ? 'main-container' : 'main-container-with-sheet'"
-      fill-height
-    >
-      <v-row no-gutters class="main-row">
-        <v-col cols="12" sm="6">
-          <v-sheet id="canvas-cover" height="25vh">
-            <canvas id="metronome"></canvas>
-          </v-sheet>
-        </v-col>
-        <v-col cols="12" sm="6">
-          <v-row justify="center" class="mb-n4" no-gutters>
-            <v-col cols="auto">
-              <v-container fluid fill-height class="pa-0">
-                <v-btn icon x-large @click="minusBPM">
-                  <v-icon>mdi-minus</v-icon>
-                </v-btn>
-              </v-container>
+    <v-tabs-items v-model="currentTab">
+      <v-tab-item>
+        <v-container :class="sheet === null ? 'menu-bar' : 'menu-bar-with-sheet'">
+          <v-select
+            :items="menu"
+            v-model="current_menu"
+            solo
+            hide-details="true"
+            @change="menuChanged"
+          ></v-select>
+        </v-container>
+        <v-container
+          :class="sheet === null ? 'main-container' : 'main-container-with-sheet'"
+          fill-height
+        >
+          <v-row no-gutters class="main-row">
+            <v-col cols="12" sm="6">
+              <v-sheet id="canvas-cover" height="25vh" v-intersect="drawInit">
+                <canvas id="metronome"></canvas>
+              </v-sheet>
             </v-col>
-            <v-col cols="5" class="text-center">
-              <span class="bpm" @click.stop="openChangeBpmDialog">{{ bpm }}</span>
-            </v-col>
-            <v-col cols="auto">
-              <v-container fluid fill-height class="pa-0">
-                <v-btn icon x-large @click="plusBPM">
-                  <v-icon>mdi-plus</v-icon>
-                </v-btn>
-              </v-container>
+            <v-col cols="12" sm="6">
+              <v-row justify="center" class="mb-n4" no-gutters>
+                <v-col cols="auto">
+                  <v-container fluid fill-height class="pa-0">
+                    <v-btn icon x-large @click="minusBPM">
+                      <v-icon>mdi-minus</v-icon>
+                    </v-btn>
+                  </v-container>
+                </v-col>
+                <v-col cols="5" class="text-center">
+                  <span class="bpm" @click.stop="openChangeBpmDialog">{{ bpm }}</span>
+                </v-col>
+                <v-col cols="auto">
+                  <v-container fluid fill-height class="pa-0">
+                    <v-btn icon x-large @click="plusBPM">
+                      <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                  </v-container>
+                </v-col>
+              </v-row>
+              <v-btn block large outlined @click="btnClicked">
+                <v-icon class="mr-2">{{isPlaying ? "mdi-pause":"mdi-play"}}</v-icon>
+              </v-btn>
+              <v-img class="mt-8" v-if="sheet !== null" :src="sheet" max-width="100%" contain></v-img>
             </v-col>
           </v-row>
-          <v-btn block large outlined @click="btnClicked">
-            <v-icon class="mr-2">{{isPlaying ? "mdi-pause":"mdi-play"}}</v-icon>
-          </v-btn>
-          <v-img class="mt-8" v-if="sheet !== null" :src="sheet" max-width="100%" contain></v-img>
-        </v-col>
-      </v-row>
-    </v-container>
+        </v-container>
+      </v-tab-item>
+      <v-tab-item>Hello!</v-tab-item>
+    </v-tabs-items>
 
     <v-dialog v-model="changeBpmDialog" max-width="290">
       <v-card>
@@ -93,15 +112,12 @@ export default class Metronome extends Vue {
   private bpms = new Array<number>();
   public isPlaying = false;
   public changeBpmDialog = false;
+  public tabs = ["シンプル", "ミラー"];
+  public currentTab = this.tabs[0];
 
   public mounted() {
     this.calBpms();
 
-    // canvas準備
-    this.canvas = document.querySelector("#metronome") as HTMLCanvasElement; //getElementById()等でも可。オブジェクトが取れれば良い。
-    this.ctx = this.canvas.getContext("2d")!;
-
-    this.setCanvasReso();
     window.addEventListener("resize", () => {
       this.setCanvasReso();
       this.preDraw();
@@ -122,9 +138,16 @@ export default class Metronome extends Vue {
     if (_registeredBpms) this.registeredBpms = JSON.parse(_registeredBpms);
   }
 
+  public drawInit() {
+    this.canvas = document.querySelector("#metronome") as HTMLCanvasElement; //getElementById()等でも可。オブジェクトが取れれば良い。
+    this.ctx = this.canvas.getContext("2d")!;
+    this.setCanvasReso();
+    this.preDraw();
+  }
+
   private loadCount = 0;
   private preDraw() {
-    if (++this.loadCount < 2) return;
+    if (++this.loadCount < 3) return;
     this.draw(0);
   }
 
@@ -312,10 +335,10 @@ export default class Metronome extends Vue {
   cursor: pointer;
 }
 .main-container {
-  height: calc(var(--vh, 1vh) * 100 - 56px);
+  height: calc(var(--vh, 1vh) * 100 - 104px);
 }
 .main-container-with-sheet {
-  height: calc(var(--vh, 1vh) * 100 - 128px);
+  height: calc(var(--vh, 1vh) * 100 - 176px);
 }
 .main-row {
   max-width: 100% !important;
@@ -326,7 +349,6 @@ export default class Metronome extends Vue {
 }
 .menu-bar {
   position: absolute;
-  top: 56px;
 }
 .menu-bar-with-sheet {
   position: relative;
