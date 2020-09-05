@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar color="primary" dark>
+    <v-app-bar color="primary" dark flat>
       <v-btn icon @click="$router.push('/')">
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
@@ -11,22 +11,19 @@
         <v-tabs v-model="currentTab" align-with-title fixed-tabs>
           <v-tabs-slider></v-tabs-slider>
 
-          <v-tab v-for="tab in tabs" :key="tab" class="ma-0">{{ tab }}</v-tab>
+          <v-tab v-for="tab in tabs" :key="tab" class="ma-0" @change="drawInit">{{ tab }}</v-tab>
         </v-tabs>
       </template>
     </v-app-bar>
 
+    <v-container
+      :class="sheet === null || currentTab === 'ミラー' ? 'menu-bar' : 'menu-bar-with-sheet'"
+    >
+      <v-select :items="menu" v-model="current_menu" solo hide-details="true" @change="menuChanged"></v-select>
+    </v-container>
+
     <v-tabs-items v-model="currentTab">
       <v-tab-item>
-        <v-container :class="sheet === null ? 'menu-bar' : 'menu-bar-with-sheet'">
-          <v-select
-            :items="menu"
-            v-model="current_menu"
-            solo
-            hide-details="true"
-            @change="menuChanged"
-          ></v-select>
-        </v-container>
         <v-container
           :class="sheet === null ? 'main-container' : 'main-container-with-sheet'"
           fill-height
@@ -65,7 +62,41 @@
           </v-row>
         </v-container>
       </v-tab-item>
-      <v-tab-item>Hello!</v-tab-item>
+
+      <v-tab-item>
+        <mirror-camera></mirror-camera>
+        <v-container class="mini-main-container">
+          <v-row no-gutters class="main-row d-flex align-end">
+            <v-col cols="3">
+              <div id="mini-canvas-cover" v-intersect="drawInit">
+                <canvas id="mini-metronome"></canvas>
+              </div>
+            </v-col>
+            <v-col cols="2">
+              <v-container fluid class="pa-0 d-flex justify-center">
+                <v-btn icon x-large @click="minusBPM">
+                  <v-icon>mdi-minus</v-icon>
+                </v-btn>
+              </v-container>
+            </v-col>
+            <v-col cols="2" class="text-center">
+              <span class="mini-bpm" @click.stop="openChangeBpmDialog">{{ bpm }}</span>
+            </v-col>
+            <v-col cols="2">
+              <v-container fluid class="pa-0 d-flex justify-center">
+                <v-btn icon x-large @click="plusBPM">
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+              </v-container>
+            </v-col>
+            <v-col cols="3">
+              <v-btn outlined @click="btnClicked" min-width="100%" class="pa-0" x-large>
+                <v-icon>{{isPlaying ? "mdi-pause":"mdi-play"}}</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-tab-item>
     </v-tabs-items>
 
     <v-dialog v-model="changeBpmDialog" max-width="290">
@@ -92,11 +123,12 @@ import Vue from "vue";
 import Component from "vue-class-component";
 import VueRouter from "vue-router";
 import { Howl, Howler } from "howler";
+import MirrorCamera from "@/components/MirrorCamera.vue";
 
 Component.registerHooks(["beforeRouteLeave"]);
 
 @Component({
-  components: {},
+  components: { MirrorCamera },
 })
 export default class Metronome extends Vue {
   public menu = ["フリー", "基礎練１", "基礎練２"];
@@ -113,7 +145,7 @@ export default class Metronome extends Vue {
   public isPlaying = false;
   public changeBpmDialog = false;
   public tabs = ["シンプル", "ミラー"];
-  public currentTab = this.tabs[0];
+  public currentTab = 0;
 
   public mounted() {
     this.calBpms();
@@ -140,6 +172,11 @@ export default class Metronome extends Vue {
 
   public drawInit() {
     this.canvas = document.querySelector("#metronome") as HTMLCanvasElement; //getElementById()等でも可。オブジェクトが取れれば良い。
+    if (this.currentTab === 1)
+      this.canvas = document.querySelector(
+        "#mini-metronome"
+      ) as HTMLCanvasElement;
+
     this.ctx = this.canvas.getContext("2d")!;
     this.setCanvasReso();
     this.preDraw();
@@ -220,7 +257,9 @@ export default class Metronome extends Vue {
 
   public dpr = window.devicePixelRatio || 1;
   private setCanvasReso() {
-    const cover = document.getElementById("canvas-cover")!;
+    let cover = document.getElementById("canvas-cover")!;
+    if (this.currentTab === 1)
+      cover = document.getElementById("mini-canvas-cover")!;
     let width = cover.clientWidth;
     let height = cover.clientHeight;
 
@@ -334,11 +373,20 @@ export default class Metronome extends Vue {
   font-size: 5rem;
   cursor: pointer;
 }
+.mini-bpm {
+  font-size: 2rem;
+  cursor: pointer;
+}
 .main-container {
   height: calc(var(--vh, 1vh) * 100 - 104px);
 }
 .main-container-with-sheet {
   height: calc(var(--vh, 1vh) * 100 - 176px);
+}
+.mini-main-container {
+  position: fixed;
+  bottom: 0;
+  z-index: 1;
 }
 .main-row {
   max-width: 100% !important;
@@ -347,10 +395,15 @@ export default class Metronome extends Vue {
   width: 100%;
   height: 40vh;
 }
+#mini-metronome {
+  height: 50px;
+}
 .menu-bar {
   position: absolute;
+  z-index: 1;
 }
 .menu-bar-with-sheet {
   position: relative;
+  z-index: 1;
 }
 </style>
