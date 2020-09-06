@@ -40,7 +40,7 @@ export default class MirrorCamera extends Vue {
   height: 100%;
   position: absolute;
   left: 50%;
-  transform: translateX(-50%);
-  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%) rotateY(180deg);
+  -webkit-transform: translateX(-50%) rotateY(180deg);
 }
 </style>
