@@ -16,9 +16,7 @@
       </template>
     </v-app-bar>
 
-    <v-container
-      :class="sheet === null || currentTab === 'ミラー' ? 'menu-bar' : 'menu-bar-with-sheet'"
-    >
+    <v-container :class="(currentTab === 1 || sheet === null) ? 'menu-bar' : 'menu-bar-with-sheet'">
       <v-select :items="menu" v-model="current_menu" solo hide-details="true" @change="menuChanged"></v-select>
     </v-container>
 
@@ -64,9 +62,11 @@
       </v-tab-item>
 
       <v-tab-item>
-        <mirror-camera></mirror-camera>
+        <div class="mirror-wrapper">
+          <mirror-camera></mirror-camera>
+        </div>
         <v-container class="mini-main-container">
-          <v-row no-gutters class="main-row d-flex align-end">
+          <v-row no-gutters class="main-row d-flex align-center">
             <v-col cols="3">
               <div id="mini-canvas-cover" v-intersect="drawInit">
                 <canvas id="mini-metronome"></canvas>
@@ -387,6 +387,7 @@ export default class Metronome extends Vue {
   position: fixed;
   bottom: 0;
   z-index: 1;
+  background: rgba(255, 255, 255, 0.6);
 }
 .main-row {
   max-width: 100% !important;
@@ -405,5 +406,8 @@ export default class Metronome extends Vue {
 .menu-bar-with-sheet {
   position: relative;
   z-index: 1;
+}
+.mirror-wrapper {
+  height: calc(var(--vh, 1vh) * 100 - 104px);
 }
 </style>

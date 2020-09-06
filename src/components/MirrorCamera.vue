@@ -1,7 +1,5 @@
 <template>
-  <div id="app">
-    <video ref="video" id="video" autoplay playsinline></video>
-  </div>
+  <video ref="video" id="video" autoplay playsinline></video>
 </template>
 
 <script lang="ts">
@@ -38,6 +36,11 @@ export default class MirrorCamera extends Vue {
 
 <style scoped>
 #video {
-  width: 100%;
+  width: auto;
+  height: 100%;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
 }
 </style>
