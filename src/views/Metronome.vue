@@ -387,7 +387,7 @@ export default class Metronome extends Vue {
   position: fixed;
   bottom: 0;
   z-index: 1;
-  background: rgba(255, 255, 255, 0.6);
+  background-color: rgba(255, 255, 255, 0.6);
 }
 .main-row {
   max-width: 100% !important;
