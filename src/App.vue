@@ -42,7 +42,6 @@ p {
   font-family: "M PLUS 1p", sans-serif;
 }
 #background {
-  background: initial;
   height: 100vh; /* 変数をサポートしていないブラウザのフォールバック */
   height: calc(var(--vh, 1vh) * 100);
 }

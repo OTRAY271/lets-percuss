@@ -1,8 +1,8 @@
 <template>
-  <v-container class="grey lighten-5" height="100%">
+  <v-container height="100%">
     <v-row class="logo" dense></v-row>
     <v-row class="btns" dense>
-      <v-col v-for="card in cards" :key="card.title" cols="6" sm="3">
+      <v-col v-for="card in cards" :key="card.title" :cols="card.cols" sm="4">
         <v-card height="100%" @click="$router.push(card.url)">
           <v-img
             :src="card.img"
@@ -32,18 +32,17 @@ export default class Home extends Vue {
       title: "メトロノーム",
       img: "https://cdn.vuetifyjs.com/images/cards/house.jpg",
       url: "/metronome",
-    },
-    {
-      title: "ミラー",
-      img: "https://cdn.vuetifyjs.com/images/cards/road.jpg",
+      cols: 12,
     },
     {
       title: "<span class='no-wrap'>リズムで</span>フラッシュ",
       img: "https://cdn.vuetifyjs.com/images/cards/plane.jpg",
+      cols: 6,
     },
     {
       title: "<span class='no-wrap'>テンポ当て</span>ゲーム",
       img: "https://cdn.vuetifyjs.com/images/cards/house.jpg",
+      cols: 6,
     },
   ];
 }

@@ -8,31 +8,33 @@
       <v-toolbar-title>メトロノーム</v-toolbar-title>
 
       <template v-slot:extension>
-        <v-tabs v-model="currentTab" align-with-title fixed-tabs>
+        <v-tabs v-model="currentTab" align-with-title grow>
           <v-tabs-slider></v-tabs-slider>
 
-          <v-tab v-for="tab in tabs" :key="tab" class="ma-0" @change="drawInit">{{ tab }}</v-tab>
+          <v-tab v-for="tab in tabs" :key="tab" class="ma-0">{{ tab }}</v-tab>
         </v-tabs>
       </template>
     </v-app-bar>
 
-    <v-container :class="(currentTab === 1 || sheet === null) ? 'menu-bar' : 'menu-bar-with-sheet'">
+    <v-container
+      :class="(currentTab === 1 || sheet === null) ? 'menu-bar' : 'menu-bar-with-sheet content-wrapper'"
+    >
       <v-select :items="menu" v-model="current_menu" solo hide-details="true" @change="menuChanged"></v-select>
     </v-container>
 
     <v-tabs-items v-model="currentTab">
-      <v-tab-item>
+      <v-tab-item class="content-wrapper">
         <v-container
           :class="sheet === null ? 'main-container' : 'main-container-with-sheet'"
           fill-height
         >
           <v-row no-gutters class="main-row">
-            <v-col cols="12" sm="6">
+            <v-col :cols="isLargeHight ? 12 : 6">
               <v-sheet id="canvas-cover" height="25vh" v-intersect="drawInit">
-                <canvas id="metronome"></canvas>
+                <canvas id="metronome" :class="isLargeHight ? '' : 'vertical-center'"></canvas>
               </v-sheet>
             </v-col>
-            <v-col cols="12" sm="6">
+            <v-col :cols="isLargeHight ? 12 : 6">
               <v-row justify="center" class="mb-n4" no-gutters>
                 <v-col cols="auto">
                   <v-container fluid fill-height class="pa-0">
@@ -41,7 +43,7 @@
                     </v-btn>
                   </v-container>
                 </v-col>
-                <v-col cols="5" class="text-center">
+                <v-col cols="6" class="text-center">
                   <span class="bpm" @click.stop="openChangeBpmDialog">{{ bpm }}</span>
                 </v-col>
                 <v-col cols="auto">
@@ -146,13 +148,18 @@ export default class Metronome extends Vue {
   public changeBpmDialog = false;
   public tabs = ["シンプル", "ミラー"];
   public currentTab = 0;
+  public isLargeHight = true;
 
   public mounted() {
     this.calBpms();
 
     window.addEventListener("resize", () => {
-      this.setCanvasReso();
-      this.preDraw();
+      this.checkHight();
+      const me = this;
+      setTimeout(() => {
+        this.setCanvasReso();
+        this.preDraw();
+      }, 1);
     });
 
     // 画像読み込み
@@ -361,6 +368,10 @@ export default class Metronome extends Vue {
       : null;
   }
 
+  public checkHight() {
+    this.isLargeHight = window.innerHeight > 450;
+  }
+
   beforeRouteLeave(to: VueRouter, from: VueRouter, next: Function) {
     cancelAnimationFrame(this.id);
     next();
@@ -396,12 +407,22 @@ export default class Metronome extends Vue {
   width: 100%;
   height: 40vh;
 }
+.vertical-center {
+  position: absolute;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
 #mini-metronome {
   height: 50px;
 }
 .menu-bar {
   position: absolute;
   z-index: 1;
+  max-width: 512px;
+  left: 50%;
+  transform: translateX(-50%);
+  -webkit-transform: translateX(-50%);
 }
 .menu-bar-with-sheet {
   position: relative;
@@ -409,5 +430,15 @@ export default class Metronome extends Vue {
 }
 .mirror-wrapper {
   height: calc(var(--vh, 1vh) * 100 - 104px);
+  overflow: hidden;
+  position: relative;
+}
+#mini-canvas-cover {
+  height: 78px;
+}
+.content-wrapper {
+  max-width: 512px;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>
