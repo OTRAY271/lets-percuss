@@ -126,6 +126,7 @@ import Component from "vue-class-component";
 import VueRouter from "vue-router";
 import { Howl, Howler } from "howler";
 import MirrorCamera from "@/components/MirrorCamera.vue";
+import getBpms from "@/libs/bpms";
 
 Component.registerHooks(["beforeRouteLeave"]);
 
@@ -151,8 +152,6 @@ export default class Metronome extends Vue {
   public isLargeHight = true;
 
   public mounted() {
-    this.calBpms();
-
     window.addEventListener("resize", () => {
       this.checkHight();
       const me = this;
@@ -195,24 +194,6 @@ export default class Metronome extends Vue {
     this.draw(0);
   }
 
-  private calBpms() {
-    this.bpms.push(40);
-    for (let bpm = 40; bpm < 208; ) {
-      let dbpm = 8;
-      if (bpm >= 40 && bpm < 60) {
-        dbpm = 2;
-      } else if (bpm >= 60 && bpm < 72) {
-        dbpm = 3;
-      } else if (bpm >= 72 && bpm < 120) {
-        dbpm = 4;
-      } else if (bpm >= 120 && bpm < 144) {
-        dbpm = 6;
-      }
-      bpm += dbpm;
-      this.bpms.push(bpm);
-    }
-  }
-
   private lastTime = 0;
   private reset = true;
   private beforeBeatTime = 0;
@@ -253,8 +234,8 @@ export default class Metronome extends Vue {
       -weight_height -
         (height - weight_height) *
           (1 -
-            (this.bpm - this.bpms[0]) /
-              (this.bpms[this.bpms.length - 1] - this.bpms[0])),
+            (this.bpm - getBpms()[0]) /
+              (getBpms()[getBpms().length - 1] - getBpms()[0])),
       height * 0.125,
       height
     );
@@ -282,15 +263,15 @@ export default class Metronome extends Vue {
   public plusBPM() {
     let minDiff = -1;
     let fixedBpmIndex = 0;
-    this.bpms.forEach((element, index) => {
+    getBpms().forEach((element, index) => {
       const diff = Math.abs(element - this.bpm);
       if (diff < minDiff || minDiff === -1) {
         minDiff = diff;
         fixedBpmIndex = index;
       }
     }, this);
-    if (fixedBpmIndex + 1 < this.bpms.length) {
-      this.bpm = this.bpms[fixedBpmIndex + 1];
+    if (fixedBpmIndex + 1 < getBpms().length) {
+      this.bpm = getBpms()[fixedBpmIndex + 1];
       this.reset = true;
       this.preDraw();
     }
@@ -298,7 +279,7 @@ export default class Metronome extends Vue {
   public minusBPM() {
     let minDiff = -1;
     let fixedBpmIndex = 0;
-    this.bpms.forEach((element, index) => {
+    getBpms().forEach((element, index) => {
       const diff = Math.abs(element - this.bpm);
       if (diff <= minDiff || minDiff === -1) {
         minDiff = diff;
@@ -306,7 +287,7 @@ export default class Metronome extends Vue {
       }
     }, this);
     if (fixedBpmIndex - 1 >= 0) {
-      this.bpm = this.bpms[fixedBpmIndex - 1];
+      this.bpm = getBpms()[fixedBpmIndex - 1];
       this.reset = true;
       this.preDraw();
     }
@@ -336,9 +317,9 @@ export default class Metronome extends Vue {
   }
 
   public changeBpm() {
-    if (this.bpmTemporary < this.bpms[0]) this.bpmTemporary = this.bpms[0];
-    else if (this.bpmTemporary > this.bpms[this.bpms.length - 1])
-      this.bpmTemporary = this.bpms[this.bpms.length - 1];
+    if (this.bpmTemporary < getBpms()[0]) this.bpmTemporary = getBpms()[0];
+    else if (this.bpmTemporary > getBpms()[getBpms().length - 1])
+      this.bpmTemporary = getBpms()[getBpms().length - 1];
     this.bpm = this.bpmTemporary;
     this.closeChangeBpmDialog();
   }
