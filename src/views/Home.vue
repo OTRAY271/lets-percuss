@@ -37,6 +37,7 @@ export default class Home extends Vue {
     {
       title: "<span class='no-wrap'>リズムで</span>フラッシュ",
       img: "https://cdn.vuetifyjs.com/images/cards/plane.jpg",
+      url: "/rhythm_flash",
       cols: 6,
     },
     {
