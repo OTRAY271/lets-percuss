@@ -42,7 +42,8 @@ export default class Home extends Vue {
     },
     {
       title: "<span class='no-wrap'>テンポ当て</span>ゲーム",
-      img: "https://cdn.vuetifyjs.com/images/cards/house.jpg",
+      img: "https://cdn.vuetifyjs.com/images/cards/road.jpg",
+      url: "/guess_tempo",
       cols: 6,
     },
   ];

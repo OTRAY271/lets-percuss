@@ -16,7 +16,7 @@ const routes: RouteConfig[] = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Metronome.vue'),
+    component: () => import(/* webpackChunkName: "metronome" */ '../views/Metronome.vue'),
   },
   {
     path: '/rhythm_flash',
@@ -24,7 +24,14 @@ const routes: RouteConfig[] = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/RhythmFlash.vue'),
+    component: () => import(/* webpackChunkName: "rhythmFlash" */ '../views/RhythmFlash.vue'),
+  }, {
+    path: '/guess_tempo',
+    name: 'GuessTempo',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "guessTempo" */ '../views/GuessTempo.vue'),
   },
 ];
 

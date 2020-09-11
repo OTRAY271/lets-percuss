@@ -67,7 +67,6 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { component, nextTick } from "vue/types/umd";
 
 type states = "entrance" | "countdown" | "playing" | "end" | "result";
 
