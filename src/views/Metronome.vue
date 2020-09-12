@@ -19,8 +19,34 @@
     <v-container
       :class="(currentTab === 1 || sheet === null) ? 'menu-bar' : 'menu-bar-with-sheet content-wrapper'"
     >
-      <v-select :items="menu" v-model="current_menu" solo hide-details="true" @change="menuChanged"></v-select>
+      <v-select
+        :items="menu"
+        v-model="currentMenu"
+        solo
+        hide-details="true"
+        @change="menuChanged"
+        @click="menuClicked"
+        @blur="hideGarbageBtn"
+      >
+        <div slot="append-item" class="adding-btn pl-4 py-2" @click="openAddingDialog">
+          <v-icon class="mt-n1">mdi-plus</v-icon>追加...
+        </div>
+      </v-select>
     </v-container>
+
+    <v-fab-transition>
+      <v-btn
+        v-if="showGarbageBtn"
+        fixed
+        fab
+        right
+        class="garbage-btn"
+        color="secondary"
+        @click.stop="deleteMenu"
+      >
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+    </v-fab-transition>
 
     <v-tabs-items v-model="currentTab">
       <v-tab-item class="content-wrapper">
@@ -117,6 +143,23 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="addingDialog" max-width="290">
+      <v-card>
+        <v-card-title class="headline">メニューを追加</v-card-title>
+
+        <v-card-text>
+          <v-text-field v-model="newMenuName" ref="menuField"></v-text-field>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn color="primary" text @click="closeAddingDialog(false)">キャンセル</v-btn>
+          <v-btn color="primary" text @click="closeAddingDialog(true)">完了</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -135,7 +178,7 @@ Component.registerHooks(["beforeRouteLeave"]);
 })
 export default class Metronome extends Vue {
   public menu = ["フリー", "基礎練１", "基礎練２"];
-  public current_menu = this.menu[0];
+  public currentMenu = this.menu[0];
   public registeredBpms = [120, 60, 98];
   public sheets = [null, "kiso1.png", null];
   public canvas!: HTMLCanvasElement;
@@ -150,6 +193,9 @@ export default class Metronome extends Vue {
   public tabs = ["シンプル", "ミラー"];
   public currentTab = 0;
   public isLargeHight = true;
+  public addingDialog = false;
+  public newMenuName = "";
+  public showGarbageBtn = false;
 
   public mounted() {
     window.addEventListener("resize", () => {
@@ -174,6 +220,8 @@ export default class Metronome extends Vue {
 
     let _registeredBpms = localStorage.getItem("registeredBpms");
     if (_registeredBpms) this.registeredBpms = JSON.parse(_registeredBpms);
+    let _menu = localStorage.getItem("menu");
+    if (_menu) this.menu = JSON.parse(_menu);
   }
 
   public drawInit() {
@@ -316,6 +364,31 @@ export default class Metronome extends Vue {
     scroll(0, 0);
   }
 
+  public openAddingDialog() {
+    this.addingDialog = true;
+    this.newMenuName = "";
+    setTimeout(() => (this.$refs.menuField as HTMLDivElement).focus(), 100);
+  }
+  public closeAddingDialog(isAdd: boolean) {
+    if (isAdd) {
+      this.menu.push(this.newMenuName);
+      this.registeredBpms.push(120);
+      this.currentMenu = this.newMenuName;
+      localStorage.setItem("menu", JSON.stringify(this.menu));
+      this.menuChanged();
+    }
+    this.addingDialog = false;
+    scroll(0, 0);
+  }
+  public deleteMenu() {
+    const menuIndexToBeDeleted = this.menu.indexOf(this.currentMenu);
+    this.currentMenu = this.menu[menuIndexToBeDeleted - 1];
+    this.menu.splice(menuIndexToBeDeleted, 1);
+    this.registeredBpms.splice(menuIndexToBeDeleted, 1);
+    localStorage.setItem("menu", JSON.stringify(this.menu));
+    this.menuChanged();
+  }
+
   public changeBpm() {
     if (this.bpmTemporary < getBpms()[0]) this.bpmTemporary = getBpms()[0];
     else if (this.bpmTemporary > getBpms()[getBpms().length - 1])
@@ -325,17 +398,17 @@ export default class Metronome extends Vue {
   }
 
   public menuChanged() {
-    this.bpm = this.registeredBpms[this.menu.indexOf(this.current_menu)];
+    this.bpm = this.registeredBpms[this.menu.indexOf(this.currentMenu)];
     this.reset = true;
   }
 
   public get bpm() {
-    return this.registeredBpms[this.menu.indexOf(this.current_menu)];
+    return this.registeredBpms[this.menu.indexOf(this.currentMenu)];
   }
 
   public set bpm(newValue) {
     this.registeredBpms.splice(
-      this.menu.indexOf(this.current_menu),
+      this.menu.indexOf(this.currentMenu),
       1,
       newValue
     );
@@ -343,14 +416,23 @@ export default class Metronome extends Vue {
   }
 
   public get sheet() {
-    let index = this.menu.indexOf(this.current_menu);
-    return index < this.sheets.length && this.sheets[index] !== null
+    let index = this.menu.indexOf(this.currentMenu);
+    return index < this.sheets.length && !!this.sheets[index]
       ? require("@/assets/sheet/" + this.sheets[index])
       : null;
   }
 
   public checkHight() {
     this.isLargeHight = window.innerHeight > 450;
+  }
+
+  public menuClicked() {
+    if (this.menu.indexOf(this.currentMenu) >= 3) this.showGarbageBtn = true;
+  }
+
+  public hideGarbageBtn() {
+    const me = this;
+    setTimeout(() => (me.showGarbageBtn = false), 100);
   }
 
   beforeRouteLeave(to: VueRouter, from: VueRouter, next: Function) {
@@ -421,5 +503,13 @@ export default class Metronome extends Vue {
   max-width: 512px;
   margin-left: auto;
   margin-right: auto;
+}
+.garbage-btn {
+  top: 80px;
+  right: max(16px, calc((100vw - 512px) / 2));
+  z-index: 9;
+}
+.adding-btn {
+  cursor: pointer;
 }
 </style>
