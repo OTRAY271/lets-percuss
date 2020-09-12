@@ -20,6 +20,8 @@
             正解は
             <span class="text-h3">{{ getBpms()[answerTempoIndex] }}</span>
           </div>
+          <br />
+          <div v-if="loss < messages.length" class="text-center">{{ messages[loss] }}</div>
         </div>
 
         <div v-else-if="currentState === 'result'" class="text-center text-h6">
@@ -30,7 +32,7 @@
             <div class="text-h2">
               <strong>{{ score }}</strong>
             </div>
-          </transition>
+          </transition>/100
           <br />
           <br />
           <v-btn @click="start" x-large>リトライ</v-btn>
@@ -61,6 +63,7 @@
             :max="getBpms().length-1"
             class="mt-12"
             thumb-label="always"
+            readonly
           >
             <template v-slot:thumb-label="{ value }">{{ getBpms()[value] }}</template>
           </v-range-slider>
@@ -75,9 +78,13 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import VueRouter from "vue-router";
+import { Howl, Howler } from "howler";
 import getBpms from "@/libs/bpms";
 
 type states = "entrance" | "playing" | "checkAns" | "result";
+
+Component.registerHooks(["beforeRouteLeave"]);
 
 @Component
 export default class GuessTempo extends Vue {
@@ -89,6 +96,15 @@ export default class GuessTempo extends Vue {
   private answerTempoIndex!: number;
   public getBpms = getBpms;
   private lossRange = new Array(2);
+  public clickSound!: Howl;
+  private allotment = [20, 19, 17, 14, 10, 5];
+  public messages = ["ピタリ賞！", "お見事！", "素晴らしい！", "その調子"];
+
+  public mounted() {
+    this.clickSound = new Howl({
+      src: [require("@/assets/metronome/click.wav")],
+    });
+  }
 
   public start() {
     this.step = 1;
@@ -102,8 +118,11 @@ export default class GuessTempo extends Vue {
   }
 
   public checkAns() {
+    cancelAnimationFrame(this.id);
     this.lossRange[0] = Math.min(this.guessedTempoIndex, this.answerTempoIndex);
     this.lossRange[1] = Math.max(this.guessedTempoIndex, this.answerTempoIndex);
+    if (this.loss < this.allotment.length)
+      this.score += this.allotment[this.loss];
     this.currentState = "checkAns";
     setTimeout(() => {
       if (this.step++ < this.maxSteps) {
@@ -116,9 +135,41 @@ export default class GuessTempo extends Vue {
     }, 2000);
   }
 
+  get loss() {
+    return Math.abs(this.guessedTempoIndex - this.answerTempoIndex);
+  }
+
   private makeQuestion() {
     this.guessedTempoIndex = 26;
     this.answerTempoIndex = Math.floor(Math.random() * getBpms().length);
+    this.reset = true;
+    this.update();
+  }
+
+  private lastTime = 0;
+  private reset = true;
+  private beforeBeatTime = 0;
+  private id = 0;
+  private update() {
+    this.id = requestAnimationFrame(this.update);
+    const bpm = getBpms()[this.answerTempoIndex];
+    if (this.reset) {
+      this.lastTime = new Date().getTime();
+      this.beforeBeatTime = -60 / bpm / 2 - 0.1;
+      this.reset = false;
+    }
+    let timestamp = new Date().getTime() - this.lastTime;
+    const k = 0.6;
+    if (timestamp / 1000 - this.beforeBeatTime > 60 / bpm) {
+      this.clickSound.stop();
+      this.clickSound.play();
+      this.beforeBeatTime += 60 / bpm;
+    }
+  }
+
+  beforeRouteLeave(to: VueRouter, from: VueRouter, next: Function) {
+    cancelAnimationFrame(this.id);
+    next();
   }
 }
 </script>
