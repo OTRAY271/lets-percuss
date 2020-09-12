@@ -1,5 +1,10 @@
 <template>
-  <v-sheet id="ruler" height="2px"></v-sheet>
+  <div>
+    <v-sheet v-if="showRuler" id="ruler" :style="`top: ${rulerY}px;`" height="2px"></v-sheet>
+    <v-btn :style="`bottom: ${fabBottom}px;`" fixed fab right @click="showRuler = !showRuler">
+      <v-icon>{{ showRuler ? "mdi-eye-off" : "mdi-ruler"}}</v-icon>
+    </v-btn>
+  </div>
 </template>
 
 <script lang="ts">
@@ -10,24 +15,45 @@ import { Prop } from "vue-property-decorator";
 @Component
 export default class Ruler extends Vue {
   private isMousePressed = false;
-  private ruler!: HTMLElement;
+  private rulerY = 0;
+  private showRuler = false;
+  private cameraComponent!: HTMLElement;
   @Prop() public top!: number;
   @Prop() public bottom!: number;
+  @Prop() public cameraId!: string;
 
   public mounted() {
-    this.ruler = document.getElementById("ruler") as HTMLElement;
-    document.addEventListener("mousedown", (e) => {
-      this.isMousePressed = true;
+    this.cameraComponent = document.getElementById(
+      this.cameraId
+    ) as HTMLElement;
+    this.cameraComponent.addEventListener("mousedown", this.mouseDown);
+    this.cameraComponent.addEventListener("mouseup", this.mouseUp);
+    this.cameraComponent.addEventListener("mousemove", this.mouseMove);
+  }
+
+  public beforeDestroy() {
+    this.cameraComponent.removeEventListener("mousedown", this.mouseDown);
+    this.cameraComponent.removeEventListener("mouseup", this.mouseUp);
+    this.cameraComponent.removeEventListener("mousemove", this.mouseMove);
+  }
+
+  private mouseDown(e: MouseEvent) {
+    this.isMousePressed = true;
+    this.tryToMove(e.clientY);
+  }
+
+  private mouseUp() {
+    this.isMousePressed = false;
+  }
+
+  private mouseMove(e: MouseEvent) {
+    if (this.isMousePressed) {
       this.tryToMove(e.clientY);
-    });
-    document.addEventListener("mouseup", (e) => {
-      this.isMousePressed = false;
-    });
-    document.addEventListener("mousemove", (e) => {
-      if (this.isMousePressed) {
-        this.tryToMove(e.clientY);
-      }
-    });
+    }
+  }
+
+  get fabBottom() {
+    return this.bottom + 12;
   }
 
   public tryToMove(y: number) {
@@ -36,7 +62,7 @@ export default class Ruler extends Vue {
       y > this.top &&
       y < window.innerHeight - this.bottom
     ) {
-      this.ruler.style.top = y.toString() + "px";
+      this.rulerY = y;
     }
   }
 }
@@ -47,6 +73,5 @@ export default class Ruler extends Vue {
   position: fixed;
   width: 100vw;
   left: 0;
-  transition: top 0.1s 0s ease;
 }
 </style>

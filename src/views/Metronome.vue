@@ -91,7 +91,7 @@
 
       <v-tab-item>
         <div class="mirror-wrapper">
-          <mirror-camera></mirror-camera>
+          <mirror-camera :id="cameraId"></mirror-camera>
         </div>
         <v-container class="mini-main-container">
           <v-row no-gutters class="main-row d-flex align-center">
@@ -124,7 +124,7 @@
             </v-col>
           </v-row>
         </v-container>
-        <ruler :top="176" :bottom="miniContHeight"></ruler>
+        <ruler :top="176" :bottom="miniContHeight" :cameraId="cameraId"></ruler>
       </v-tab-item>
     </v-tabs-items>
 
@@ -199,6 +199,7 @@ export default class Metronome extends Vue {
   public newMenuName = "";
   public showGarbageBtn = false;
   public miniContHeight = 0;
+  public readonly cameraId = "video";
 
   public mounted() {
     window.addEventListener("resize", () => {
