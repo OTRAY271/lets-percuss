@@ -124,6 +124,7 @@
             </v-col>
           </v-row>
         </v-container>
+        <ruler :top="176" :bottom="miniContHeight"></ruler>
       </v-tab-item>
     </v-tabs-items>
 
@@ -169,12 +170,13 @@ import Component from "vue-class-component";
 import VueRouter from "vue-router";
 import { Howl, Howler } from "howler";
 import MirrorCamera from "@/components/MirrorCamera.vue";
+import Ruler from "@/components/Ruler.vue";
 import getBpms from "@/libs/bpms";
 
 Component.registerHooks(["beforeRouteLeave"]);
 
 @Component({
-  components: { MirrorCamera },
+  components: { MirrorCamera, Ruler },
 })
 export default class Metronome extends Vue {
   public menu = ["フリー", "基礎練１", "基礎練２"];
@@ -196,6 +198,7 @@ export default class Metronome extends Vue {
   public addingDialog = false;
   public newMenuName = "";
   public showGarbageBtn = false;
+  public miniContHeight = 0;
 
   public mounted() {
     window.addEventListener("resize", () => {
@@ -306,6 +309,8 @@ export default class Metronome extends Vue {
 
     this.canvas.style.width = width + "px";
     this.canvas.style.height = height + "px";
+
+    if (this.currentTab === 1) this.miniContHeight = height + 24;
   }
 
   public plusBPM() {
