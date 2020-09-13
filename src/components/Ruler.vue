@@ -73,5 +73,6 @@ export default class Ruler extends Vue {
   position: fixed;
   width: 100vw;
   left: 0;
+  background-color: #f44336;
 }
 </style>
