@@ -2,7 +2,13 @@
   <v-container height="100%">
     <v-row class="logo" dense></v-row>
     <v-row class="btns" dense>
-      <v-col v-for="card in cards" :key="card.title" :cols="card.cols" sm="4">
+      <v-col
+        v-for="card in cards"
+        :key="card.title"
+        :cols="card.cols"
+        sm="4"
+        :class="isXs ?  'btnCol':''"
+      >
         <v-card height="100%" @click="$router.push(card.url)">
           <v-img
             :src="card.img"
@@ -47,6 +53,10 @@ export default class Home extends Vue {
       cols: 6,
     },
   ];
+
+  public get isXs() {
+    return this.$vuetify.breakpoint.name === "xs";
+  }
 }
 </script>
 
@@ -56,5 +66,8 @@ export default class Home extends Vue {
 }
 .btns {
   height: 62%;
+}
+.btnCol {
+  height: 50%;
 }
 </style>
