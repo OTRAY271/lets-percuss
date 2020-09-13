@@ -1,6 +1,8 @@
 <template>
-  <v-container height="100%">
-    <v-row class="logo" dense></v-row>
+  <v-container height="100%" class="main-container">
+    <v-row class="logo" dense>
+      <v-img :src="require('@/assets/logo_big.png')" height="100%" contain></v-img>
+    </v-row>
     <v-row class="btns" dense>
       <v-col
         v-for="card in cards"
@@ -69,5 +71,8 @@ export default class Home extends Vue {
 }
 .btnCol {
   height: 50%;
+}
+.main-container {
+  background-color: #ff9800;
 }
 </style>
