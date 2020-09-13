@@ -15,7 +15,7 @@ import { Prop } from "vue-property-decorator";
 @Component
 export default class Ruler extends Vue {
   private isMousePressed = false;
-  private rulerY = 0;
+  private rulerY = 256;
   private showRuler = false;
   private cameraComponent!: HTMLElement;
   @Prop() public top!: number;
