@@ -83,7 +83,14 @@
               <v-btn block large outlined @click="btnClicked">
                 <v-icon class="mr-2">{{isPlaying ? "mdi-pause":"mdi-play"}}</v-icon>
               </v-btn>
-              <v-img class="mt-8" v-if="sheet !== null" :src="sheet" max-width="100%" contain></v-img>
+              <v-img
+                class="mt-8"
+                v-if="sheet !== null"
+                :src="sheet"
+                max-width="100%"
+                max-height="45%"
+                contain
+              ></v-img>
             </v-col>
           </v-row>
         </v-container>
@@ -182,7 +189,7 @@ export default class Metronome extends Vue {
   public menu = ["フリー", "基礎練１", "基礎練２"];
   public currentMenu = this.menu[0];
   public registeredBpms = [120, 60, 98];
-  public sheets = [null, "kiso1.png", null];
+  public sheets = [null, "kiso1.png", "kiso2.png"];
   public canvas!: HTMLCanvasElement;
   public ctx!: CanvasRenderingContext2D;
   public metronome = new Image();
