@@ -41,12 +41,7 @@
         </div>
       </v-row>
       <v-row class="remaining-time" dense>
-        <v-progress-linear
-          v-model="remainingTimePercent"
-          height="25"
-          dark
-          class="remaining-time-bar"
-        >
+        <v-progress-linear v-model="remainingTimePercent" dark class="remaining-time-bar">
           <strong>{{ Math.ceil(remainingTime) }}</strong>
         </v-progress-linear>
       </v-row>
@@ -160,6 +155,7 @@ export default class RhythmFlash extends Vue {
 }
 .remaining-time-bar {
   transition: none;
+  height: min(25px, 100%) !important;
 }
 .score {
   position: fixed;
