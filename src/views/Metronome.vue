@@ -41,7 +41,8 @@
         fab
         right
         class="garbage-btn"
-        color="secondary"
+        color="grey"
+        dark
         @click.stop="deleteMenu"
       >
         <v-icon>mdi-delete</v-icon>
@@ -411,6 +412,7 @@ export default class Metronome extends Vue {
   }
 
   public menuChanged() {
+    this.hideGarbageBtn();
     this.bpm = this.registeredBpms[this.menu.indexOf(this.currentMenu)];
     this.reset = true;
   }
