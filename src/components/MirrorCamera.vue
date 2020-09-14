@@ -15,7 +15,7 @@ export default class MirrorCamera extends Vue {
       audio: false,
       video: {
         facingMode: {
-          exact: "user", //リアカメラの設定
+          exact: "user",
         },
       },
     };

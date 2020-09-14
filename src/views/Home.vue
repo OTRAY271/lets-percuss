@@ -76,9 +76,9 @@ export default class Home extends Vue {
   background-color: #ff9800;
 }
 .mode-title {
-  color: #ffffff; /* 文字の色 */
+  color: #ffffff;
   text-shadow: 1px 1px 1px #fb8c00, -1px 1px 1px #fb8c00, 1px -1px 1px #fb8c00,
     -1px -1px 1px #fb8c00, 1px 0px 1px #fb8c00, 0px 1px 1px #fb8c00,
-    -1px 0px 1px #fb8c00, 0px -1px 1px #fb8c00; /* 文字の影 */
+    -1px 0px 1px #fb8c00, 0px -1px 1px #fb8c00;
 }
 </style>
