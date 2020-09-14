@@ -15,7 +15,6 @@ import Component from "vue-class-component";
 })
 export default class App extends Vue {
   public mounted() {
-    /* ピッチインピッチアウトによる拡大縮小を禁止 */
     document.documentElement.addEventListener(
       "touchstart",
       function (e) {
@@ -42,7 +41,7 @@ p {
   font-family: "M PLUS 1p", sans-serif;
 }
 #background {
-  height: 100vh; /* 変数をサポートしていないブラウザのフォールバック */
+  height: 100vh;
   height: calc(var(--vh, 1vh) * 100);
 }
 .noscroll {

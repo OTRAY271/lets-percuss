@@ -219,8 +219,7 @@ export default class Metronome extends Vue {
       }, 1);
     });
 
-    // 画像読み込み
-    this.metronome.src = require("@/assets/metronome/metronome.png"); // 画像のURLを指定
+    this.metronome.src = require("@/assets/metronome/metronome.png");
     this.weight.src = require("@/assets/metronome/metronome_weight.png");
 
     this.metronome.onload = () => this.preDraw();
@@ -237,7 +236,7 @@ export default class Metronome extends Vue {
   }
 
   public drawInit() {
-    this.canvas = document.querySelector("#metronome") as HTMLCanvasElement; //getElementById()等でも可。オブジェクトが取れれば良い。
+    this.canvas = document.querySelector("#metronome") as HTMLCanvasElement;
     if (this.currentTab === 1)
       this.canvas = document.querySelector(
         "#mini-metronome"
