@@ -1,24 +1,7 @@
-# lets-percuss
+# Let's! パーカス
 
-## Project setup
-```
-yarn install
-```
+打楽器練習用ウェブアプリ『Let's! パーカス』です。PWA対応。
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+## 公開先
 
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+https://lets-percuss.netlify.app/
