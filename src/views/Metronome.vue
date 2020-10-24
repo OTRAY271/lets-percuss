@@ -17,7 +17,11 @@
     </v-app-bar>
 
     <v-container
-      :class="(currentTab === 1 || sheet === null) ? 'menu-bar' : 'menu-bar-with-sheet content-wrapper'"
+      :class="
+        currentTab === 1 || sheet === null
+          ? 'menu-bar'
+          : 'menu-bar-with-sheet content-wrapper'
+      "
     >
       <v-select
         :items="menu"
@@ -28,7 +32,11 @@
         @click="menuClicked"
         @blur="hideGarbageBtn"
       >
-        <div slot="append-item" class="adding-btn pl-4 py-2" @click="openAddingDialog">
+        <div
+          slot="append-item"
+          class="adding-btn pl-4 py-2"
+          @click="openAddingDialog"
+        >
           <v-icon class="mt-n1">mdi-plus</v-icon>追加...
         </div>
       </v-select>
@@ -52,13 +60,18 @@
     <v-tabs-items v-model="currentTab">
       <v-tab-item class="content-wrapper">
         <v-container
-          :class="sheet === null ? 'main-container' : 'main-container-with-sheet'"
+          :class="
+            sheet === null ? 'main-container' : 'main-container-with-sheet'
+          "
           fill-height
         >
           <v-row no-gutters class="main-row">
             <v-col :cols="isLargeHight ? 12 : 6">
-              <v-sheet id="canvas-cover" height="25vh" v-intersect="drawInit">
-                <canvas id="metronome" :class="isLargeHight ? '' : 'vertical-center'"></canvas>
+              <v-sheet id="canvas-cover" height="34vh" v-intersect="drawInit">
+                <canvas
+                  id="metronome"
+                  :class="isLargeHight ? '' : 'vertical-center'"
+                ></canvas>
               </v-sheet>
             </v-col>
             <v-col :cols="isLargeHight ? 12 : 6">
@@ -71,7 +84,9 @@
                   </v-container>
                 </v-col>
                 <v-col cols="6" class="text-center">
-                  <span class="bpm" @click.stop="openChangeBpmDialog">{{ bpm }}</span>
+                  <span class="bpm" @click.stop="openChangeBpmDialog">{{
+                    bpm
+                  }}</span>
                 </v-col>
                 <v-col cols="auto">
                   <v-container fluid fill-height class="pa-0">
@@ -82,7 +97,9 @@
                 </v-col>
               </v-row>
               <v-btn block large outlined @click="btnClicked">
-                <v-icon class="mr-2">{{isPlaying ? "mdi-pause":"mdi-play"}}</v-icon>
+                <v-icon class="mr-2">{{
+                  isPlaying ? "mdi-pause" : "mdi-play"
+                }}</v-icon>
               </v-btn>
               <v-img
                 class="mt-8"
@@ -116,7 +133,9 @@
               </v-container>
             </v-col>
             <v-col cols="2" class="text-center">
-              <span class="mini-bpm" @click.stop="openChangeBpmDialog">{{ bpm }}</span>
+              <span class="mini-bpm" @click.stop="openChangeBpmDialog">{{
+                bpm
+              }}</span>
             </v-col>
             <v-col cols="2">
               <v-container fluid class="pa-0 d-flex justify-center">
@@ -126,8 +145,14 @@
               </v-container>
             </v-col>
             <v-col cols="3">
-              <v-btn outlined @click="btnClicked" min-width="100%" class="pa-0" x-large>
-                <v-icon>{{isPlaying ? "mdi-pause":"mdi-play"}}</v-icon>
+              <v-btn
+                outlined
+                @click="btnClicked"
+                min-width="100%"
+                class="pa-0"
+                x-large
+              >
+                <v-icon>{{ isPlaying ? "mdi-pause" : "mdi-play" }}</v-icon>
               </v-btn>
             </v-col>
           </v-row>
@@ -141,13 +166,20 @@
         <v-card-title class="headline">BPMを変更</v-card-title>
 
         <v-card-text>
-          <v-text-field v-model.number="bpmTemporary" clearable type="number" ref="bpmField"></v-text-field>
+          <v-text-field
+            v-model.number="bpmTemporary"
+            clearable
+            type="number"
+            ref="bpmField"
+          ></v-text-field>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn color="primary" text @click="closeChangeBpmDialog">キャンセル</v-btn>
+          <v-btn color="primary" text @click="closeChangeBpmDialog"
+            >キャンセル</v-btn
+          >
           <v-btn color="primary" text @click="changeBpm">完了</v-btn>
         </v-card-actions>
       </v-card>
@@ -164,8 +196,12 @@
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn color="primary" text @click="closeAddingDialog(false)">キャンセル</v-btn>
-          <v-btn color="primary" text @click="closeAddingDialog(true)">完了</v-btn>
+          <v-btn color="primary" text @click="closeAddingDialog(false)"
+            >キャンセル</v-btn
+          >
+          <v-btn color="primary" text @click="closeAddingDialog(true)"
+            >完了</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
