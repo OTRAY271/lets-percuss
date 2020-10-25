@@ -137,7 +137,7 @@
                 </v-btn>
               </v-container>
             </v-col>
-            <v-col cols="3" class="text-center">
+            <v-col cols="2" class="text-center">
               <span class="mini-bpm" @click.stop="openChangeBpmDialog">{{
                 bpm
               }}</span>
@@ -149,7 +149,7 @@
                 </v-btn>
               </v-container>
             </v-col>
-            <v-col cols="5">
+            <v-col cols="6">
               <v-btn
                 outlined
                 @click="btnClicked"
