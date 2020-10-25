@@ -115,16 +115,21 @@
       </v-tab-item>
 
       <v-tab-item>
+        <div id="overlay-canvas-cover" v-intersect="drawInit">
+          <canvas id="overlay-metronome"></canvas>
+        </div>
+
         <div class="mirror-wrapper">
           <mirror-camera :id="cameraId"></mirror-camera>
         </div>
+
         <v-container class="mini-main-container">
           <v-row no-gutters class="main-row d-flex align-center">
-            <v-col cols="3">
+            <!--<v-col cols="3">
               <div id="mini-canvas-cover" v-intersect="drawInit">
                 <canvas id="mini-metronome"></canvas>
               </div>
-            </v-col>
+            </v-col>-->
             <v-col cols="2">
               <v-container fluid class="pa-0 d-flex justify-center">
                 <v-btn icon x-large @click="minusBPM">
@@ -132,7 +137,7 @@
                 </v-btn>
               </v-container>
             </v-col>
-            <v-col cols="2" class="text-center">
+            <v-col cols="3" class="text-center">
               <span class="mini-bpm" @click.stop="openChangeBpmDialog">{{
                 bpm
               }}</span>
@@ -144,7 +149,7 @@
                 </v-btn>
               </v-container>
             </v-col>
-            <v-col cols="3">
+            <v-col cols="5">
               <v-btn
                 outlined
                 @click="btnClicked"
@@ -275,7 +280,7 @@ export default class Metronome extends Vue {
     this.canvas = document.querySelector("#metronome") as HTMLCanvasElement;
     if (this.currentTab === 1)
       this.canvas = document.querySelector(
-        "#mini-metronome"
+        /*"#mini-metronome"*/ "#overlay-metronome"
       ) as HTMLCanvasElement;
 
     this.ctx = this.canvas.getContext("2d")!;
@@ -342,7 +347,9 @@ export default class Metronome extends Vue {
   private setCanvasReso() {
     let cover = document.getElementById("canvas-cover")!;
     if (this.currentTab === 1)
-      cover = document.getElementById("mini-canvas-cover")!;
+      cover = document.getElementById(
+        /*"mini-canvas-cover"*/ "overlay-canvas-cover"
+      )!;
     let width = cover.clientWidth;
     let height = cover.clientHeight;
 
@@ -354,7 +361,7 @@ export default class Metronome extends Vue {
     this.canvas.style.width = width + "px";
     this.canvas.style.height = height + "px";
 
-    if (this.currentTab === 1) this.miniContHeight = height + 24;
+    if (this.currentTab === 1) this.miniContHeight = /*height + 24*/ 80;
   }
 
   public plusBPM() {
@@ -548,6 +555,16 @@ export default class Metronome extends Vue {
 }
 #mini-canvas-cover {
   height: 78px;
+}
+#overlay-canvas-cover {
+  position: absolute;
+  z-index: 2;
+  height: 40vh;
+  width: 100%;
+  top: 45%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: 0.7;
 }
 .content-wrapper {
   max-width: 512px;
