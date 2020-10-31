@@ -17,7 +17,11 @@
     </v-app-bar>
 
     <v-container
-      :class="(currentTab === 1 || sheet === null) ? 'menu-bar' : 'menu-bar-with-sheet content-wrapper'"
+      :class="
+        currentTab === 1 || sheet === null
+          ? 'menu-bar'
+          : 'menu-bar-with-sheet content-wrapper'
+      "
     >
       <v-select
         :items="menu"
@@ -28,7 +32,11 @@
         @click="menuClicked"
         @blur="hideGarbageBtn"
       >
-        <div slot="append-item" class="adding-btn pl-4 py-2" @click="openAddingDialog">
+        <div
+          slot="append-item"
+          class="adding-btn pl-4 py-2"
+          @click="openAddingDialog"
+        >
           <v-icon class="mt-n1">mdi-plus</v-icon>追加...
         </div>
       </v-select>
@@ -52,13 +60,18 @@
     <v-tabs-items v-model="currentTab">
       <v-tab-item class="content-wrapper">
         <v-container
-          :class="sheet === null ? 'main-container' : 'main-container-with-sheet'"
+          :class="
+            sheet === null ? 'main-container' : 'main-container-with-sheet'
+          "
           fill-height
         >
           <v-row no-gutters class="main-row">
             <v-col :cols="isLargeHight ? 12 : 6">
-              <v-sheet id="canvas-cover" height="25vh" v-intersect="drawInit">
-                <canvas id="metronome" :class="isLargeHight ? '' : 'vertical-center'"></canvas>
+              <v-sheet id="canvas-cover" height="34vh" v-intersect="drawInit">
+                <canvas
+                  id="metronome"
+                  :class="isLargeHight ? '' : 'vertical-center'"
+                ></canvas>
               </v-sheet>
             </v-col>
             <v-col :cols="isLargeHight ? 12 : 6">
@@ -71,7 +84,9 @@
                   </v-container>
                 </v-col>
                 <v-col cols="6" class="text-center">
-                  <span class="bpm" @click.stop="openChangeBpmDialog">{{ bpm }}</span>
+                  <span class="bpm" @click.stop="openChangeBpmDialog">{{
+                    bpm
+                  }}</span>
                 </v-col>
                 <v-col cols="auto">
                   <v-container fluid fill-height class="pa-0">
@@ -82,7 +97,9 @@
                 </v-col>
               </v-row>
               <v-btn block large outlined @click="btnClicked">
-                <v-icon class="mr-2">{{isPlaying ? "mdi-pause":"mdi-play"}}</v-icon>
+                <v-icon class="mr-2">{{
+                  isPlaying ? "mdi-pause" : "mdi-play"
+                }}</v-icon>
               </v-btn>
               <v-img
                 class="mt-8"
@@ -98,16 +115,21 @@
       </v-tab-item>
 
       <v-tab-item>
+        <div id="overlay-canvas-cover" v-intersect="drawInit">
+          <canvas id="overlay-metronome"></canvas>
+        </div>
+
         <div class="mirror-wrapper">
           <mirror-camera :id="cameraId"></mirror-camera>
         </div>
+
         <v-container class="mini-main-container">
           <v-row no-gutters class="main-row d-flex align-center">
-            <v-col cols="3">
+            <!--<v-col cols="3">
               <div id="mini-canvas-cover" v-intersect="drawInit">
                 <canvas id="mini-metronome"></canvas>
               </div>
-            </v-col>
+            </v-col>-->
             <v-col cols="2">
               <v-container fluid class="pa-0 d-flex justify-center">
                 <v-btn icon x-large @click="minusBPM">
@@ -116,7 +138,9 @@
               </v-container>
             </v-col>
             <v-col cols="2" class="text-center">
-              <span class="mini-bpm" @click.stop="openChangeBpmDialog">{{ bpm }}</span>
+              <span class="mini-bpm" @click.stop="openChangeBpmDialog">{{
+                bpm
+              }}</span>
             </v-col>
             <v-col cols="2">
               <v-container fluid class="pa-0 d-flex justify-center">
@@ -125,9 +149,15 @@
                 </v-btn>
               </v-container>
             </v-col>
-            <v-col cols="3">
-              <v-btn outlined @click="btnClicked" min-width="100%" class="pa-0" x-large>
-                <v-icon>{{isPlaying ? "mdi-pause":"mdi-play"}}</v-icon>
+            <v-col cols="6">
+              <v-btn
+                outlined
+                @click="btnClicked"
+                min-width="100%"
+                class="pa-0"
+                x-large
+              >
+                <v-icon>{{ isPlaying ? "mdi-pause" : "mdi-play" }}</v-icon>
               </v-btn>
             </v-col>
           </v-row>
@@ -141,13 +171,20 @@
         <v-card-title class="headline">BPMを変更</v-card-title>
 
         <v-card-text>
-          <v-text-field v-model.number="bpmTemporary" clearable type="number" ref="bpmField"></v-text-field>
+          <v-text-field
+            v-model.number="bpmTemporary"
+            clearable
+            type="number"
+            ref="bpmField"
+          ></v-text-field>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn color="primary" text @click="closeChangeBpmDialog">キャンセル</v-btn>
+          <v-btn color="primary" text @click="closeChangeBpmDialog"
+            >キャンセル</v-btn
+          >
           <v-btn color="primary" text @click="changeBpm">完了</v-btn>
         </v-card-actions>
       </v-card>
@@ -164,8 +201,12 @@
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn color="primary" text @click="closeAddingDialog(false)">キャンセル</v-btn>
-          <v-btn color="primary" text @click="closeAddingDialog(true)">完了</v-btn>
+          <v-btn color="primary" text @click="closeAddingDialog(false)"
+            >キャンセル</v-btn
+          >
+          <v-btn color="primary" text @click="closeAddingDialog(true)"
+            >完了</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -239,7 +280,7 @@ export default class Metronome extends Vue {
     this.canvas = document.querySelector("#metronome") as HTMLCanvasElement;
     if (this.currentTab === 1)
       this.canvas = document.querySelector(
-        "#mini-metronome"
+        /*"#mini-metronome"*/ "#overlay-metronome"
       ) as HTMLCanvasElement;
 
     this.ctx = this.canvas.getContext("2d")!;
@@ -306,7 +347,9 @@ export default class Metronome extends Vue {
   private setCanvasReso() {
     let cover = document.getElementById("canvas-cover")!;
     if (this.currentTab === 1)
-      cover = document.getElementById("mini-canvas-cover")!;
+      cover = document.getElementById(
+        /*"mini-canvas-cover"*/ "overlay-canvas-cover"
+      )!;
     let width = cover.clientWidth;
     let height = cover.clientHeight;
 
@@ -318,7 +361,7 @@ export default class Metronome extends Vue {
     this.canvas.style.width = width + "px";
     this.canvas.style.height = height + "px";
 
-    if (this.currentTab === 1) this.miniContHeight = height + 24;
+    if (this.currentTab === 1) this.miniContHeight = /*height + 24*/ 80;
   }
 
   public plusBPM() {
@@ -512,6 +555,16 @@ export default class Metronome extends Vue {
 }
 #mini-canvas-cover {
   height: 78px;
+}
+#overlay-canvas-cover {
+  position: absolute;
+  z-index: 2;
+  height: 40vh;
+  width: 100%;
+  top: 45%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  opacity: 0.7;
 }
 .content-wrapper {
   max-width: 512px;

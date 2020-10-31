@@ -1,8 +1,19 @@
 <template>
   <div>
-    <v-sheet v-if="showRuler" id="ruler" :style="`top: ${rulerY}px;`" height="2px"></v-sheet>
-    <v-btn :style="`bottom: ${fabBottom}px;`" fixed fab right @click="showRuler = !showRuler">
-      <v-icon>{{ showRuler ? "mdi-eye-off" : "mdi-ruler"}}</v-icon>
+    <v-sheet
+      v-if="showRuler"
+      id="ruler"
+      :style="`top: ${rulerY}px;`"
+      height="4px"
+    ></v-sheet>
+    <v-btn
+      :style="`bottom: ${fabBottom}px;`"
+      fixed
+      fab
+      right
+      @click="showRuler = !showRuler"
+    >
+      <v-icon>{{ showRuler ? "mdi-eye-off" : "mdi-ruler" }}</v-icon>
     </v-btn>
   </div>
 </template>
