@@ -559,9 +559,9 @@ export default class Metronome extends Vue {
 #overlay-canvas-cover {
   position: absolute;
   z-index: 2;
-  height: 40vh;
-  width: 100%;
-  top: 45%;
+  height: 20vh;
+  width: 50%;
+  bottom: 12px;
   transform: translateY(-50%);
   pointer-events: none;
   opacity: 0.7;
