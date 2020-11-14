@@ -1,11 +1,21 @@
 <template>
   <div>
+    <fade-layer
+      :visible="isLightsOut"
+      @turn-on="isLightsOut = false"
+    ></fade-layer>
     <v-app-bar color="primary" dark flat>
       <v-btn icon @click="$router.push('/')">
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
 
       <v-toolbar-title>メトロノーム</v-toolbar-title>
+
+      <v-spacer></v-spacer>
+
+      <v-btn icon dark @click="isLightsOut = true"
+        ><v-icon>mdi-ceiling-light</v-icon></v-btn
+      >
 
       <template v-slot:extension>
         <v-tabs v-model="currentTab" align-with-title grow>
@@ -220,12 +230,13 @@ import VueRouter from "vue-router";
 import { Howl, Howler } from "howler";
 import MirrorCamera from "@/components/MirrorCamera.vue";
 import Ruler from "@/components/Ruler.vue";
+import FadeLayer from "@/components/FadeLayer.vue";
 import getBpms from "@/libs/bpms";
 
 Component.registerHooks(["beforeRouteLeave"]);
 
 @Component({
-  components: { MirrorCamera, Ruler },
+  components: { MirrorCamera, Ruler, FadeLayer },
 })
 export default class Metronome extends Vue {
   public menu = ["フリー", "基礎練１", "基礎練２"];
@@ -248,6 +259,7 @@ export default class Metronome extends Vue {
   public newMenuName = "";
   public showGarbageBtn = false;
   public miniContHeight = 0;
+  public isLightsOut = false;
   public readonly cameraId = "video";
 
   public mounted() {
