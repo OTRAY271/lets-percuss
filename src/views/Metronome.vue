@@ -279,7 +279,10 @@ export default class Metronome extends Vue {
     this.weight.onload = () => this.preDraw();
 
     this.clickSound = new Howl({
-      src: [require("@/assets/metronome/click.wav")],
+      src: [
+        require("@/assets/metronome/click.wav"),
+        require("@/assets/metronome/click.mp3"),
+      ],
     });
 
     let _registeredBpms = localStorage.getItem("registeredBpms");
