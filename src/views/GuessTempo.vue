@@ -9,7 +9,9 @@
     </v-app-bar>
     <v-container height="100%" class="content-wrapper">
       <v-row class="stage d-flex align-center justify-center" dense>
-        <v-btn v-if="currentState === 'entrance'" x-large rounded @click="start">スタート</v-btn>
+        <v-btn v-if="currentState === 'entrance'" x-large rounded @click="start"
+          >スタート</v-btn
+        >
         <div v-else-if="currentState === 'playing'">
           <div class="score">スコア：{{ score }}</div>
           <div class="text-h5">このテンポは？</div>
@@ -21,7 +23,9 @@
             <span class="text-h3">{{ getBpms()[answerTempoIndex] }}</span>
           </div>
           <br />
-          <div v-if="loss < messages.length" class="text-center">{{ messages[loss] }}</div>
+          <div v-if="loss < messages.length" class="text-center">
+            {{ messages[loss] }}
+          </div>
         </div>
 
         <div v-else-if="currentState === 'result'" class="text-center text-h6">
@@ -31,8 +35,8 @@
           <transition name="bounce" appear>
             <div class="text-h2">
               <strong>{{ score }}</strong>
-            </div>
-          </transition>/100
+            </div> </transition
+          >/100
           <br />
           <br />
           <v-btn @click="start" x-large>リトライ</v-btn>
@@ -48,28 +52,38 @@
           <v-slider
             v-if="currentState !== 'checkAns'"
             v-model="guessedTempoIndex"
-            :thumb-label="currentState === 'playing' ? 'always':''"
+            :thumb-label="currentState === 'playing' ? 'always' : ''"
             min="0"
-            :max="getBpms().length-1"
+            :max="getBpms().length - 1"
             class="mt-12"
             :disabled="currentState !== 'playing'"
           >
-            <template v-slot:thumb-label="{ value }">{{ getBpms()[value] }}</template>
+            <template v-slot:thumb-label="{ value }">{{
+              getBpms()[value]
+            }}</template>
           </v-slider>
           <v-range-slider
             v-else
             v-model="lossRange"
             min="0"
-            :max="getBpms().length-1"
+            :max="getBpms().length - 1"
             class="mt-12"
             thumb-label="always"
             readonly
           >
-            <template v-slot:thumb-label="{ value }">{{ getBpms()[value] }}</template>
+            <template v-slot:thumb-label="{ value }">{{
+              getBpms()[value]
+            }}</template>
           </v-range-slider>
         </v-col>
         <v-col class="d-flex justify-center">
-          <v-btn x-large outlined :disabled="currentState !== 'playing'" @click="checkAns">解答</v-btn>
+          <v-btn
+            x-large
+            outlined
+            :disabled="currentState !== 'playing'"
+            @click="checkAns"
+            >解答</v-btn
+          >
         </v-col>
       </v-row>
     </v-container>
@@ -102,7 +116,10 @@ export default class GuessTempo extends Vue {
 
   public mounted() {
     this.clickSound = new Howl({
-      src: [require("@/assets/metronome/click.wav")],
+      src: [
+        require("@/assets/metronome/click.wav"),
+        require("@/assets/metronome/click.mp3"),
+      ],
     });
   }
 
