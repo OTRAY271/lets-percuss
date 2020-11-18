@@ -239,7 +239,7 @@ Component.registerHooks(["beforeRouteLeave"]);
   components: { MirrorCamera, Ruler, FadeLayer },
 })
 export default class Metronome extends Vue {
-  public menu = ["フリー", "基礎練１", "基礎練２"];
+  public menu = ["フリー", "練習曲１", "練習曲２"];
   public currentMenu = this.menu[0];
   public registeredBpms = [120, 60, 98];
   public sheets = [null, "kiso1.png", "kiso2.png"];
