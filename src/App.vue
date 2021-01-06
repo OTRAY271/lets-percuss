@@ -1,5 +1,5 @@
 <template>
-  <v-app class="noscroll">
+  <v-app class="noscroll background-color">
     <v-main>
       <router-view id="background" class="noscroll"></router-view>
     </v-main>
@@ -43,6 +43,9 @@ p {
 #background {
   height: 100vh;
   height: calc(var(--vh, 1vh) * 100);
+}
+.background-color {
+  background: #ff9800 !important;
 }
 .noscroll {
   overflow: hidden;
