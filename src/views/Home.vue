@@ -1,7 +1,15 @@
 <template>
   <v-container height="100%" class="main-container">
+    <div class="background"></div>
+
+    <information></information>
+
     <v-row class="logo" dense>
-      <v-img :src="require('@/assets/logo_big.png')" height="100%" contain></v-img>
+      <v-img
+        :src="require('@/assets/logo_big.png')"
+        height="100%"
+        contain
+      ></v-img>
     </v-row>
     <v-row class="btns" dense>
       <v-col
@@ -9,7 +17,7 @@
         :key="card.title"
         :cols="card.cols"
         sm="4"
-        :class="isXs ?  'btnCol':''"
+        :class="isXs ? 'btnCol' : ''"
       >
         <v-card height="100%" @click="$router.push(card.url)">
           <v-img
@@ -28,11 +36,12 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import Information from "@/components/Information.vue";
 
 Component.registerHooks(["beforeRouteEnter"]);
 
 @Component({
-  components: {},
+  components: { Information },
 })
 export default class Home extends Vue {
   public cards = [
@@ -63,6 +72,14 @@ export default class Home extends Vue {
 </script>
 
 <style scoped>
+.background {
+  background: #ff9800;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+}
 .logo {
   height: 38%;
 }
