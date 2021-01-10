@@ -31,15 +31,6 @@
             Androidをご利用の方は画面に表示される<strong>「ホーム画面に追加」</strong>をタップ,
             iPhoneをご利用の方は画面下部の共有メニューから<strong>「ホーム画面に追加」</strong>を選択してください。
           </p>
-          <p>
-            <strong
-              >フィードバックやお問い合わせは<a
-                href="https://forms.gle/1zmHXqMMcQaecA599"
-                target="_blank"
-                >こちら</a
-              >から。</strong
-            >
-          </p>
         </v-card-text>
 
         <v-card-actions>
